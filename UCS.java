@@ -1,61 +1,64 @@
-package ass1_2;
+package search;
 
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 public class UCS implements algorithm {
 
-
-
-static Node min(LinkedList<Node> list) {
-	Node min=list.get(0);
-	for(int i=1;i<list.size();i++) {
-		if(list.get(i).cost<min.cost) {
-			min=list.get(i);
-		}
-	}
-	return min;
-}
-private static void Print(LinkedList<Integer> p) {
-	for(int i=0;i<p.size()-1;i++)	{
-		System.out.print((char) (65 + p.get(i)) + "-->");
-	}
-	System.out.println("F");
-}
 	@Override
 	public void runAlgo(Graph g) {
-		LinkedList<Integer>  print[] =new LinkedList[g.V];
-		for (int i = 0; i < print.length; i++) {
-			print[i]=new LinkedList<Integer>();
-		}
-		print[0].add(0);
-		boolean visited[] = new boolean[g.V]; 
-		LinkedList<Node> list=new LinkedList<Node>();
-	    visited[0]=true; 
-	    list.add(new Node(0,0));
-	    Node s;
-	    while (list.size() != 0) 
-	    { 
-	        s = min(list);
-	        if(s.index!=0) {
-	        	for(int i=0;i<print[g.p[s.index]].size();i++) {
-	        		print[s.index].add(print[g.p[s.index]].get(i));
-	        	}
-	        	print[s.index].add(s.index);
+		Node Index = null;
+		LinkedList<Node> closed=new LinkedList<Node>();
+		PriorityQueue<Node> frontier = new PriorityQueue<Node>(new Comparator<Node>() {
+	        @Override
+	        public int compare(Node o1, Node o2) {
+	        	if(o1.cost<o2.cost)
+	        		return -1;
+	        	else if(o1.cost>o2.cost)
+	        		return 1;
+	        	else 
+	        		return 0;
 	        }
-	        	if (s.index == 5) {
-	    			Print(print[s.index]);
-	    			return;
-	    		}
-	        list.remove(s);
-	        for(int i=0;i<g.adj[s.index].size();i++) {
-	            if (!visited[g.adj[s.index].get(i).dst]) 
-	            { 
-	                visited[g.adj[s.index].get(i).dst] = true; 
-	                list.add(new Node(g.adj[s.index].get(i).dst,g.Cost[g.adj[s.index].get(i).dst])); 
-	            } 
-	         }
-	        } 		
+	    });
+		g.nodes[0]=new Node(0, 0);
+		frontier.add(g.nodes[0]);
+		System.out.println("Search route:");
+		while(frontier.size()!=0) {
+			Index=frontier.poll();
+			if(Index.index==6) {
+				System.out.println("-->6");
+				break;
+			}
+			System.out.print("-->"+Index.index);
+			for(int i=0; i<g.adj[Index.index].size();i++) {
+				if(!closed.contains(g.nodes[g.adj[Index.index].get(i).dst])) {
+					if(frontier.contains(g.nodes[g.adj[Index.index].get(i).dst])) {
+						if(Index.cost+g.adj[Index.index].get(i).cost<g.nodes[g.adj[Index.index].get(i).dst].cost) {
+							g.nodes[g.adj[Index.index].get(i).dst].cost=Index.cost+g.adj[Index.index].get(i).cost;
+							g.nodes[g.adj[Index.index].get(i).dst].p=Index;
+						}
+					}
+					else {
+						g.nodes[g.adj[Index.index].get(i).dst]=new Node(g.adj[Index.index].get(i).dst, Index.cost+g.adj[Index.index].get(i).cost);
+						g.nodes[g.adj[Index.index].get(i).dst].p=Index;
+						frontier.add(g.nodes[g.adj[Index.index].get(i).dst]);
+					}
+				}
+			}
+			closed.add(Index);
+			
+		}
+		System.out.println("Solution route:");
+		System.out.print("6");
+		Index=Index.p;
+		while(Index.index!=0) {
+			System.out.print("<--"+Index.index);
+			Index=Index.p;
+		}
+		System.out.println("<--0");
+		
 	}
-	}
+}
 
 

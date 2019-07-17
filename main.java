@@ -1,4 +1,4 @@
-package ass1_2;
+package search;
 
 import java.util.Scanner;
 import java.util.stream.Stream;
@@ -50,6 +50,6 @@ public class main {
 	}
 
 	public static void main(String[] args) throws IOException {
-		StrategyAlgo(6, "D:\\array.txt");
+		StrategyAlgo(7, "D:\\array.txt");
 	}
 }

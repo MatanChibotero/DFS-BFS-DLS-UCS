@@ -1,4 +1,4 @@
-package ass1_2;
+package search;
 
 public interface algorithm {
 	void runAlgo(Graph g);	
